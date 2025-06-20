@@ -7,6 +7,7 @@ import Card from "./components/Card";
 export default function Home() {
   const [countries, setCountries] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetch("/data.json")
@@ -19,10 +20,13 @@ export default function Home() {
     ...new Set(countries.map((c) => c.region).filter(Boolean)),
   ];
 
-  const filteredCountries =
-    selectedRegion === "All"
-      ? countries
-      : countries.filter((country) => country.region === selectedRegion);
+  const filteredCountries = countries
+    .filter((country) =>
+      selectedRegion === "All" ? true : country.region === selectedRegion
+    )
+    .filter((country) =>
+      country.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   return (
     <main className="my-8">
@@ -30,6 +34,8 @@ export default function Home() {
         regions={regions}
         setSelectedRegion={setSelectedRegion}
         selectedRegion={selectedRegion}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredCountries?.map((country, index) => (
